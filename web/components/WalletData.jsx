@@ -7,7 +7,7 @@ import sad from "../public/emoji/sad.png";
 export default function WalletData({ wallet, blockchain, group, fullAddress }) {
   return (
     <section className="WalletData">
-      <DataCards wallet={wallet} blockchain={blockchain} />
+      <DataCards wallet={wallet} blockchain={blockchain} group={group} />
       {!wallet.stats.noData ? (
         <DataTable wallet={wallet} group={group} />
       ) : (

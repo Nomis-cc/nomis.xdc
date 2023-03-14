@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="PaginatedResult.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ namespace Nomis.Utils.Wrapper
         /// <param name="pageSize">Count of data per page.</param>
         internal PaginatedResult(
             bool succeeded,
-            List<TData>? data = default,
+            IList<TData>? data = default,
             List<string>? messages = null,
             int count = 0,
             int page = 1,
@@ -58,7 +58,7 @@ namespace Nomis.Utils.Wrapper
         /// List of data.
         /// </summary>
         [JsonInclude]
-        public List<TData>? Data { get; private set; }
+        public IList<TData>? Data { get; private set; }
 
         /// <inheritdoc cref="IPaginated.PageNumber"/>
         [JsonInclude]
@@ -97,9 +97,9 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="messages">Message (error) list.</param>
         /// <returns>Returns <see cref="PaginatedResult{T}"/>.</returns>
-        public static PaginatedResult<TData> Failure(List<string> messages)
+        public static PaginatedResult<TData> Failure(IList<string> messages)
         {
-            return new(false, default, messages);
+            return new(false, default, messages.ToList());
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Nomis.Utils.Wrapper
         /// <param name="page">Current page number.</param>
         /// <param name="pageSize">Count of data per page.</param>
         /// <returns>Returns <see cref="PaginatedResult{T}"/>.</returns>
-        public static PaginatedResult<TData> Success(List<TData> data, int count, int page, int pageSize)
+        public static PaginatedResult<TData> Success(IList<TData> data, int count, int page, int pageSize)
         {
             return new(true, data, null, count, page, pageSize);
         }

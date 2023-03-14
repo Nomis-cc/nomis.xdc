@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="CustomException.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ namespace Nomis.Utils.Exceptions
         /// Error message list.
         /// </summary>
         // ReSharper disable once MemberInitializerValueIgnored
-        public List<string>? ErrorMessages { get; } = new();
+        public IList<string>? ErrorMessages { get; set; }
 
         /// <summary>
         /// Http status code.

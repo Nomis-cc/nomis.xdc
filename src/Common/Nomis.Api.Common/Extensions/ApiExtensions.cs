@@ -1,19 +1,23 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="ApiExtensions.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
 
+using AspNetCoreRateLimit;
+using AspNetCoreRateLimit.Redis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nomis.Api.Common.Providers;
+using Nomis.Api.Common.Settings;
 using Nomis.Api.Common.Swagger.Filters;
 using Nomis.ScoringService.Interfaces.Builder;
 using Nomis.Utils.Contracts.Common;
 using Nomis.Utils.Contracts.Services;
+using Nomis.Utils.Extensions;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -51,11 +55,12 @@ namespace Nomis.Api.Common.Extensions
         /// <returns>Returns <see cref="IScoringOptionsBuilder"/>.</returns>
         public static IScoringOptionsBuilder With<TSettings, TServiceRegistrar>(
             this IScoringOptionsBuilder optionsBuilder)
-            where TSettings : class, IAPISettings, new()
+            where TSettings : class, IApiSettings, new()
             where TServiceRegistrar : IServiceRegistrar, new()
         {
+            // ReSharper disable once ArrangeObjectCreationWhenTypeNotEvident
             return optionsBuilder
-                .RegisterBlockchainScore<TSettings, TServiceRegistrar>(new TServiceRegistrar());
+                .RegisterServices<TSettings, TServiceRegistrar>(new TServiceRegistrar());
         }
 
         /// <summary>
@@ -108,6 +113,42 @@ namespace Nomis.Api.Common.Extensions
         }
 
         /// <summary>
+        /// Adds rate limiting.
+        /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/>.</param>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <returns>Returns <see cref="IServiceCollection"/>.</returns>
+        public static IServiceCollection AddRateLimiting(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.AddSettings<ApiCommonSettings>(configuration);
+            var settings = configuration.GetSettings<ApiCommonSettings>();
+            if (settings.UseRateLimiting)
+            {
+                // TODO - add "X-Client" header by some logic
+                services
+                    .Configure<IpRateLimitOptions>(configuration.GetSection("IpRateLimiting"))
+                    .Configure<IpRateLimitPolicies>(configuration.GetSection("IpRateLimitPolicies"))
+
+                    // .Configure<ClientRateLimitOptions>(configuration.GetSection("ClientRateLimiting"))
+                    // .Configure<ClientRateLimitPolicies>(configuration.GetSection("ClientRateLimitPolicies"))
+                    .AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>()
+                    .AddInMemoryRateLimiting();
+
+                if (settings.UseRedisCaching)
+                {
+                    services
+                        .AddDistributedRateLimiting<AsyncKeyLockProcessingStrategy>()
+                        .AddDistributedRateLimiting<RedisProcessingStrategy>()
+                        .AddRedisRateLimiting();
+                }
+            }
+
+            return services;
+        }
+
+        /// <summary>
         /// Private method with shared logic of config adding.
         /// </summary>
         /// <param name="relativePath">Directory to find. Root app directory if null or empty.</param>
@@ -129,7 +170,7 @@ namespace Nomis.Api.Common.Extensions
                     string configsFolder = Path.Combine(appRoot, relativePath);
                     foreach (string fileName in GetAvailableFiles(configsFolder, filenamePattern, includeSubdirectories: true, includeOnlyForCurrentEnvironment))
                     {
-                        addConfigFile(filename: fileName, optional: true, reloadOnChange: true);
+                        addConfigFile(filename: fileName, optional: true, reloadOnChange: false);
                     }
                 }
             }
@@ -164,7 +205,7 @@ namespace Nomis.Api.Common.Extensions
 
                 string[] dirFiles = Directory.GetFiles(directory, searchPattern, SearchOption.TopDirectoryOnly);
                 result.AddRange(includeOnlyForCurrentEnvironment
-                    ? dirFiles.Where(x => x.Contains($".{env}."))
+                    ? dirFiles.Where(x => x.Contains($".{env}.", StringComparison.OrdinalIgnoreCase))
                     : dirFiles);
             }
             catch (UnauthorizedAccessException ex)

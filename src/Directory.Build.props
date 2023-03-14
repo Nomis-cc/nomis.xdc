@@ -20,6 +20,12 @@
         <PackageReference Include="Roslynator.Analyzers">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Meziantou.Analyzer">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="SonarAnalyzer.CSharp">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <AdditionalFiles Include="$(MSBuildThisFileDirectory)\stylecop.json" Link="Properties\stylecop.json" />
         <AdditionalFiles Include="$(MSBuildThisFileDirectory)\nomis.ruleset" Link="Properties\nomis.ruleset" />
         <AdditionalFiles Include="$(MSBuildThisFileDirectory)\.editorconfig" Link="Properties\.editorconfig" />

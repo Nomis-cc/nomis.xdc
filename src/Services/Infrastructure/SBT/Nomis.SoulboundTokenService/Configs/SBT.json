@@ -1,0 +1,15 @@
+{
+  "SoulboundTokenSettings": {
+    "EvmWalletPrivateKey": "",
+    "TokenData": {
+      "Finance": {
+        "TokenName": "NMSS",
+        "Version": "0.1"
+      },
+      "Eco": {
+        "TokenName": "NMSES",
+        "Version": "0.1"
+      }
+    }
+  }
+}

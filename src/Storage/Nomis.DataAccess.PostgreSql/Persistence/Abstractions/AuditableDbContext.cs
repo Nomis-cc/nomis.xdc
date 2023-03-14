@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="AuditableDbContext.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ namespace Nomis.DataAccess.PostgreSql.Persistence.Abstractions
         /// <inheritdoc/>
         public virtual async Task<int> BaseSaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return await base.SaveChangesAsync(cancellationToken);
+            return await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -84,7 +84,7 @@ namespace Nomis.DataAccess.PostgreSql.Persistence.Abstractions
         /// <inheritdoc cref="IAuditableDbContext"/>
         public new virtual async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return await this.SaveChangesWithAuditAndPublishEventsAsync(_eventLogger, _mediator, _currentUserService, _entitySettings, cancellationToken);
+            return await this.SaveChangesWithAuditAndPublishEventsAsync(_eventLogger, _mediator, _currentUserService, _entitySettings, cancellationToken).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="ISupportsSavingChanges.SaveChanges"/>

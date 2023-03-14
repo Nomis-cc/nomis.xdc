@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="XdcscanClient.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -43,9 +43,26 @@ namespace Nomis.Xdcscan
         {
             string request =
                 $"/api/accounts/{address}";
-            var response = await _client.GetAsync(request);
+            var response = await _client.GetAsync(request).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<XdcscanAccount>() ?? throw new CustomException("Can't get account data.");
+            return await response.Content.ReadFromJsonAsync<XdcscanAccount>().ConfigureAwait(false) ?? throw new CustomException("Can't get account data.");
+        }
+
+        /// <inheritdoc/>
+        public async Task<IList<XdcscanAccountTokenData>> GetTokensAsync(string address)
+        {
+            int page = 1;
+            var result = new List<XdcscanAccountTokenData>();
+            var transactionsData = await GetTokenListAsync(address).ConfigureAwait(false);
+            result.AddRange(transactionsData.Items ?? new List<XdcscanAccountTokenData>());
+            while (transactionsData?.Items?.Count >= ItemsFetchLimit)
+            {
+                transactionsData = await GetTokenListAsync(address, page).ConfigureAwait(false);
+                result.AddRange(transactionsData?.Items ?? new List<XdcscanAccountTokenData>());
+                page++;
+            }
+
+            return result;
         }
 
         /// <inheritdoc/>
@@ -53,9 +70,9 @@ namespace Nomis.Xdcscan
         {
             string request =
                 $"/api/tokens/holding/{tokenType.ToString().ToLowerInvariant()}/{address}";
-            var response = await _client.GetAsync(request);
+            var response = await _client.GetAsync(request).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<XdcscanAccountHolderTokens>() ?? throw new CustomException("Can't get account tokens.");
+            return await response.Content.ReadFromJsonAsync<XdcscanAccountHolderTokens>().ConfigureAwait(false) ?? throw new CustomException("Can't get account tokens.");
         }
 
         /// <inheritdoc/>
@@ -65,16 +82,28 @@ namespace Nomis.Xdcscan
         {
             int page = 1;
             var result = new List<TResultItem>();
-            var transactionsData = await GetTransactionListAsync<TResult>(address);
+            var transactionsData = await GetTransactionListAsync<TResult>(address).ConfigureAwait(false);
             result.AddRange(transactionsData.Items ?? new List<TResultItem>());
             while (transactionsData?.Items?.Count >= ItemsFetchLimit)
             {
-                transactionsData = await GetTransactionListAsync<TResult>(address, page);
+                transactionsData = await GetTransactionListAsync<TResult>(address, page).ConfigureAwait(false);
                 result.AddRange(transactionsData?.Items ?? new List<TResultItem>());
                 page++;
             }
 
             return result;
+        }
+
+        private async Task<XdcscanAccountTokens> GetTokenListAsync(
+            string address,
+            int page = 1)
+        {
+            string request =
+                $"/api/tokens/holding/xrc20/{address}?page={page}&limit=50";
+
+            var response = await _client.GetAsync(request).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<XdcscanAccountTokens>().ConfigureAwait(false) ?? throw new CustomException("Can't get account tokens.");
         }
 
         private async Task<TResult> GetTransactionListAsync<TResult>(
@@ -108,9 +137,9 @@ namespace Nomis.Xdcscan
                 return default!;
             }
 
-            var response = await _client.GetAsync(request);
+            var response = await _client.GetAsync(request).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<TResult>() ?? throw new CustomException("Can't get account transactions.");
+            return await response.Content.ReadFromJsonAsync<TResult>().ConfigureAwait(false) ?? throw new CustomException("Can't get account transactions.");
         }
     }
 }

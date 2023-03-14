@@ -8,11 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Humanizer.Core" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Services\Infrastructure\Chainanalysis\Nomis.Chainanalysis.Interfaces\Nomis.Chainanalysis.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Services\Infrastructure\DefiLlama\Nomis.DefiLlama.Interfaces\Nomis.DefiLlama.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Services\Infrastructure\Greysafe\Nomis.Greysafe.Interfaces\Nomis.Greysafe.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Services\Infrastructure\SBT\Nomis.SoulboundTokenService.Interfaces\Nomis.SoulboundTokenService.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Services\Infrastructure\Snapshot\Nomis.Snapshot.Interfaces\Nomis.Snapshot.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Services\Infrastructure\Social\Nomis.CyberConnect.Interfaces\Nomis.CyberConnect.Interfaces.csproj" />
     <ProjectReference Include="..\Nomis.Utils\Nomis.Utils.csproj" />
   </ItemGroup>
 </Project>

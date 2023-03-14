@@ -1,0 +1,87 @@
+{
+  "ApiCommonSettings": {
+    "UseRateLimiting": true,
+    "UseRedisCaching": false,
+    "UseSwaggerCaching": true
+  },
+  "IpRateLimiting": {
+    "EnableEndpointRateLimiting": true,
+    "StackBlockedRequests": false,
+    "RealIpHeader": "X-Real-IP",
+    "ClientIdHeader": "X-ClientId",
+    "HttpStatusCode": 429,
+    "IpWhitelist": [ "127.0.0.1", "::1/10", "128.0.128.222" ],
+    "EndpointWhitelist": [
+      "get:/api/v1/dex/aggregator/blockchains",
+      "get:/api/v1/dex/aggregator/providers",
+      "get:/api/v1/dex/aggregator/stablecoins",
+      "*:/api/v1/hapi/*",
+      "*:/api/v1/rapyd/*",
+      "*:/api/v1/sbt/*",
+      "*:/api/v1/snapshot/*"
+    ],
+    "QuotaExceededResponse": {
+      "Content": "{{ \"messages\": [ \"Whoa! Calm down, cowboy! Quota exceeded. Maximum allowed: {0} per {1}. Please try again in {2} second(s).\" ], \"succeeded\": false }}",
+      "ContentType": "application/json"
+    },
+    "GeneralRules": [
+      {
+        "Endpoint": "*",
+        "Period": "1s",
+        "Limit": 3
+      },
+      {
+        "Endpoint": "*",
+        "Period": "15m",
+        "Limit": 20
+      },
+      {
+        "Endpoint": "*",
+        "Period": "12h",
+        "Limit": 1000
+      },
+      {
+        "Endpoint": "*",
+        "Period": "7d",
+        "Limit": 10000
+      },
+      {
+        "Endpoint": "get:/api/v1/ripple/*",
+        "Period": "1m",
+        "Limit": 1,
+        "QuotaExceededResponse": {
+          "Content": "{{ \"messages\": [ \"Get Nomis score for Ripple blockchain quota exceeded. Maximum allowed: {0} per {1}. Please try again in {2} second(s).\" ], \"succeeded\": false }}",
+          "ContentType": "application/json"
+        }
+      },
+      {
+        "Endpoint": "*:/api/v1/tatum/*",
+        "Period": "10m",
+        "Limit": 3,
+        "QuotaExceededResponse": {
+          "Content": "{{ \"messages\": [ \"Get Tatum rate quota exceeded. Maximum allowed: {0} per {1}. Please try again in {2} second(s).\" ], \"succeeded\": false }}",
+          "ContentType": "application/json"
+        }
+      }
+    ]
+  },
+  "IpRateLimitPolicies": {
+    "IpRules": [
+      {
+        "Ip": "127.0.0.1",
+        "Rules": [
+          {
+            "Endpoint": "*",
+            "Period": "1s",
+            "Limit": 100
+          },
+          {
+            "Endpoint": "get:/api/v1/dex/*",
+            "Period": "1m",
+            "Limit": 1000
+          }
+        ]
+      }
+    ]
+  }
+}

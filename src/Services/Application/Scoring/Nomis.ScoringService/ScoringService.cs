@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="ScoringService.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ namespace Nomis.ScoringService
             CancellationToken cancellationToken = default)
         {
             // use throttler bc of DbContext in not thread safe
-            await _dbContextThrottler.WaitAsync(cancellationToken);
+            await _dbContextThrottler.WaitAsync(cancellationToken).ConfigureAwait(false);
 
             scoringData
                 .AddDomainEvent(new ScoringDataAddedEvent(scoringData, $"Scoring data for {scoringData.RequestAddress} wallet added."));
@@ -47,17 +47,17 @@ namespace Nomis.ScoringService
             _ = task.ContinueWith(
                 async _ =>
                 {
-                    await Task.Delay(5, cancellationToken);
+                    await Task.Delay(5, cancellationToken).ConfigureAwait(false);
                     _dbContextThrottler.Release();
                 }, cancellationToken);
 
             try
             {
-                await task;
+                await task.ConfigureAwait(false);
             }
             catch (HttpRequestException)
             {
-                await task;
+                await task.ConfigureAwait(false);
             }
         }
     }

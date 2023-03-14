@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="InvalidAddressException.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -18,9 +18,9 @@ namespace Nomis.Utils.Exceptions
         /// <summary>
         /// Initialize <see cref="InvalidAddressException"/>.
         /// </summary>
-        /// <param name="message">Exception message.</param>
-        public InvalidAddressException(string message)
-            : base(message, statusCode: HttpStatusCode.BadRequest)
+        /// <param name="address">Wallet address.</param>
+        public InvalidAddressException(string address)
+            : base($"Invalid wallet address: {address}", statusCode: HttpStatusCode.BadRequest)
         {
         }
     }

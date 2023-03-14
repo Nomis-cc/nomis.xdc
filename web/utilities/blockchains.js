@@ -8,7 +8,7 @@ export const blockchains = [
     icon: "/blockchains/xdc.svg",
     placeholder: "0x... or xdc... address",
     coin: "XDC",
-    contractAddress: "0xc3a9766e07754cC1894E5c0A2459d23A676dDD0D",
+    hide: false,
     chainId: 50,
     networkData: {
       chainId: "0x32",

@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="DomainEntity.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ namespace Nomis.Domain.Abstractions
         // ReSharper disable once NonReadonlyMemberInGetHashCode
 
         /// <inheritdoc/>
-        public override int GetHashCode() => (GetRealType().ToString() + Id).GetHashCode();
+        public override int GetHashCode() => (GetRealType().ToString() + Id).GetHashCode(StringComparison.OrdinalIgnoreCase);
 
         /// <inheritdoc/>
         public virtual void CheckRule(IBusinessRule rule) => (this as IDomainEntity).CheckRule(rule);

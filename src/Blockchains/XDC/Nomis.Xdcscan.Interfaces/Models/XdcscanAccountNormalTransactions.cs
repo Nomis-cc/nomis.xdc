@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="XdcscanAccountNormalTransactions.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -45,6 +45,6 @@ namespace Nomis.Xdcscan.Interfaces.Models
         /// </summary>
         [JsonPropertyName("items")]
         [DataMember(EmitDefaultValue = true)]
-        public List<XdcscanAccountNormalTransaction> Items { get; set; } = new();
+        public IList<XdcscanAccountNormalTransaction> Items { get; set; } = new List<XdcscanAccountNormalTransaction>();
     }
 }

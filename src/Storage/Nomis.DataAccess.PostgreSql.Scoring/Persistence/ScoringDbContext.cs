@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="ScoringDbContext.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -51,12 +51,12 @@ namespace Nomis.DataAccess.PostgreSql.Scoring.Persistence
         protected override string Schema => nameof(PostgreSqlConstants.Schemes.Scoring);
 
         /// <inheritdoc/>
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            builder.HasDefaultSchema(Schema);
-            base.OnModelCreating(builder);
-            builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
-            builder.ApplyScoringConfiguration();
+            modelBuilder.HasDefaultSchema(Schema);
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+            modelBuilder.ApplyScoringConfiguration();
         }
     }
 }

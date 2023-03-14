@@ -9,14 +9,23 @@ export default function UserStats({ wallet, blockchain, group }) {
     : () => setIsMonth(true);
 
   const [coin, setCoin] = React.useState();
+  const [coinValue, setCoinValue] = React.useState();
   React.useEffect(() => {
     for (let i = 0; i < blockchains.length; i++) {
       if (blockchains[i].slug === blockchain) {
-        if (group === "eco") {
-          setCoin(wallet.stats.ecoToken);
-        }
-        else {
+        let value;
+        if (group === "eco" && wallet.stats.tokenBalance !== undefined) {
+          setCoin(wallet.stats.token);
+          value = wallet.stats.tokenBalance;
+          setCoinValue(value > 1000
+            ? Math.round(value / 10) / 100 + "k"
+            : Math.round(value * 100) / 100);
+        } else {
           setCoin(blockchains[i].coin);
+          value = wallet.stats.nativeBalance;
+          setCoinValue(value > 1000
+            ? Math.round(value / 10) / 100 + "k"
+            : Math.round(value * 100) / 100);
         }
       }
     }
@@ -29,20 +38,18 @@ export default function UserStats({ wallet, blockchain, group }) {
           <div className="balance">
             <div className="container">
               <span className="units">{coin}</span>
-              {wallet.stats.balance > 1000
-                ? Math.round(wallet.stats.balance / 10) / 100 + "k"
-                : Math.round(wallet.stats.balance * 100) / 100}
+              {coinValue}
             </div>
             {/* <div className="container">
               <span className="units">$</span>
-              {wallet.stats.balanceUSD < 1000
-                ? wallet.stats.balanceUSD
-                : wallet.stats.balanceUSD < 1000000
-                ? Math.floor((wallet.stats.balanceUSD / 1000) * 100) / 100 + "k"
-                : wallet.stats.balanceUSD < 1000000000
-                ? Math.floor((wallet.stats.balanceUSD / 1000000) * 100) / 100 +
+              {wallet.stats.nativeBalanceUSD < 1000
+                ? wallet.stats.nativeBalanceUSD
+                : wallet.stats.nativeBalanceUSD < 1000000
+                ? Math.floor((wallet.stats.nativeBalanceUSD / 1000) * 100) / 100 + "k"
+                : wallet.stats.nativeBalanceUSD < 1000000000
+                ? Math.floor((wallet.stats.nativeBalanceUSD / 1000000) * 100) / 100 +
                   "m"
-                : Math.floor((wallet.stats.balanceUSD / 1000000000) * 100) /
+                : Math.floor((wallet.stats.nativeBalanceUSD / 1000000000) * 100) /
                     100 +
                   "b"}
             </div> */}

@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="ScoringData.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -41,19 +41,19 @@ namespace Nomis.Domain.Scoring.Entities
         /// </remarks>
         /// <param name="requestAddress">Request address.</param>
         /// <param name="resolvedAddress">Resolved request address.</param>
-        /// <param name="chainId">Blockchain id.</param>
+        /// <param name="blockchain">Blockchain id.</param>
         /// <param name="score">Score.</param>
         /// <param name="statData">Scoring stat data.</param>
         public ScoringData(
             string requestAddress,
             string resolvedAddress,
-            ulong chainId,
+            ulong blockchain,
             double score,
             string statData)
         {
             RequestAddress = requestAddress;
             ResolvedAddress = resolvedAddress;
-            Blockchain = chainId;
+            Blockchain = blockchain;
             Score = score;
             StatData = statData;
         }

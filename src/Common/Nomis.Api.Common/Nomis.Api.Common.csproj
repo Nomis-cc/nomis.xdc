@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" />
+    <PackageReference Include="AspNetCoreRateLimit" />
+    <PackageReference Include="AspNetCoreRateLimit.Redis" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" />
@@ -18,5 +19,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Services\Application\Scoring\Nomis.ScoringService\Nomis.ScoringService.csproj" />
     <ProjectReference Include="..\Nomis.Blockchain.Abstractions\Nomis.Blockchain.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Configs\Common.API.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

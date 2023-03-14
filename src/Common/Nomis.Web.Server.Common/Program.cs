@@ -1,27 +1,46 @@
 // ------------------------------------------------------------------------------------------------------
 // <copyright file="Program.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
 
 using System.Reflection;
 
+using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Nomis.Api.Chainanalysis.Extensions;
 using Nomis.Api.Common.Extensions;
 using Nomis.Api.Common.Middlewares;
+using Nomis.Api.Common.Settings;
 using Nomis.Api.Common.Swagger.Filters;
+using Nomis.Api.CyberConnect.Extensions;
+using Nomis.Api.DefiLlama.Extensions;
+using Nomis.Api.DexAggregator.Extensions;
+using Nomis.Api.Greysafe.Extensions;
+using Nomis.Api.Snapshot.Extensions;
+using Nomis.Api.SoulboundToken.Extensions;
 using Nomis.Api.Xdc.Extensions;
 using Nomis.CacheProviderService.Extensions;
+using Nomis.Chainanalysis;
 using Nomis.Coingecko.Extensions;
 using Nomis.CurrentUserService.Extensions;
+using Nomis.CyberConnect;
 using Nomis.DataAccess.PostgreSql.Extensions;
 using Nomis.DataAccess.PostgreSql.Scoring.Extensions;
+using Nomis.DefiLlama;
+using Nomis.DexProviderService;
+using Nomis.Greysafe;
 using Nomis.ScoringService.Extensions;
+using Nomis.Snapshot;
+using Nomis.SoulboundTokenService;
+using Nomis.Utils.Extensions;
 using Nomis.Web.Server.Common.Extensions;
 using Nomis.Xdcscan;
 using Serilog;
 using Swashbuckle.AspNetCore.Filters;
+using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
@@ -37,6 +56,7 @@ builder.Configuration
 builder.Services
     .AddHttpContextAccessor()
     .AddCache(builder.Configuration)
+    .AddRateLimiting(builder.Configuration)
     .AddCurrentUserService()
     .AddApplicationPersistence(builder.Configuration)
     .AddScoringPersistence(builder.Configuration)
@@ -44,7 +64,14 @@ builder.Services
     .AddScoringService();
 
 var scoringOptions = builder.ConfigureScoringOptions()
+    .WithDefiLlamaAPI<DefiLlamaApi>()
+    .WithSnapshotProtocol<SnapshotHub>()
+    .WithCyberConnectProtocol<CyberConnect>()
+    .WithGreysafeService<Greysafe>()
+    .WithChainanalysisService<Chainanalysis>()
+    .WithEvmSoulboundTokenService<EvmSoulboundToken>()
     .WithXDCBlockchain<Xdcscan>()
+    .WithDexAggregator<DexProviderRegistrar>()
     .Build();
 
 builder.Services
@@ -81,7 +108,7 @@ builder.Services.AddSingleton<ExceptionHandlingMiddleware>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    #region Add xml-commånts
+    #region Add xml-commÃ¥nts
 
     var xmlPathes = new List<string>();
     string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -122,7 +149,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
-    #endregion Add xml-commånts
+    #endregion Add xml-commÃ¥nts
 
     options.SwaggerDoc("v1", new()
     {
@@ -154,8 +181,8 @@ builder.Services.AddSwaggerGen(options =>
             .SelectMany(attr => attr.Versions)
             .ToList();
 
-        return versions?.Any(v => $"v{v}" == version) == true
-               && (maps.Count == 0 || maps.Any(v => $"v{v}" == version));
+        return versions?.Any(v => string.Equals($"v{v}", version, StringComparison.OrdinalIgnoreCase)) == true
+               && (maps.Count == 0 || maps.Any(v => string.Equals($"v{v}", version, StringComparison.OrdinalIgnoreCase)));
     });
 
     #endregion Add Versioning
@@ -172,7 +199,14 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddSwaggerExamplesFromAssemblies(Assembly.GetExecutingAssembly());
 
-builder.Services.AddHealthChecks(); // TODO - add custom healthchecks
+builder.Services.AddSettings<ApiCommonSettings>(builder.Configuration);
+var apiCommonSettings = builder.Configuration.GetSettings<ApiCommonSettings>();
+if (apiCommonSettings.UseSwaggerCaching)
+{
+    builder.Services.Replace(ServiceDescriptor.Transient<ISwaggerProvider, CachingSwaggerProvider>());
+}
+
+builder.Services.AddHealthChecks();
 
 builder.Host.UseSerilog((context, configuration) =>
 {
@@ -180,6 +214,8 @@ builder.Host.UseSerilog((context, configuration) =>
 });
 
 var app = builder.Build();
+
+app.UseIpRateLimiting();
 
 app.UseSerilogRequestLogging(options =>
 {

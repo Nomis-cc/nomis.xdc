@@ -1,9 +1,11 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="IWalletTransactionStats.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
+
+using Nomis.Utils.Contracts.Stats;
 
 namespace Nomis.Blockchain.Abstractions.Stats
 {
@@ -17,6 +19,26 @@ namespace Nomis.Blockchain.Abstractions.Stats
         private const double TransactionsPerMonthPercents = 18.00 / 100;
         private const double TransactionsLastMonthPercents = 10.34 / 100;
         private const double LastMonthPercents = 5.7 / 100;
+
+        /// <summary>
+        /// Set wallet transaction stats.
+        /// </summary>
+        /// <typeparam name="TWalletStats">The wallet stats type.</typeparam>
+        /// <param name="stats">The wallet stats.</param>
+        /// <returns>Returns wallet stats with initialized properties.</returns>
+        public new TWalletStats FillStatsTo<TWalletStats>(TWalletStats stats)
+            where TWalletStats : class, IWalletTransactionStats
+        {
+            stats.TotalTransactions = TotalTransactions;
+            stats.TotalRejectedTransactions = TotalRejectedTransactions;
+            stats.AverageTransactionTime = AverageTransactionTime;
+            stats.MaxTransactionTime = MaxTransactionTime;
+            stats.MinTransactionTime = MinTransactionTime;
+            stats.TimeFromLastTransaction = TimeFromLastTransaction;
+            stats.LastMonthTransactions = LastMonthTransactions;
+            stats.LastYearTransactions = LastYearTransactions;
+            return stats;
+        }
 
         /// <summary>
         /// Total transactions on wallet (number).
@@ -64,10 +86,10 @@ namespace Nomis.Blockchain.Abstractions.Stats
         public int LastYearTransactions { get; set; }
 
         /// <summary>
-        /// Get wallet transaction stats score.
+        /// Calculate wallet transaction stats score.
         /// </summary>
         /// <returns>Returns wallet transaction stats score.</returns>
-        public new double GetScore()
+        public new double CalculateScore()
         {
             double result = TotalTransactionsScore(TotalTransactions) / 100 * TotalTransactionsPercents;
 

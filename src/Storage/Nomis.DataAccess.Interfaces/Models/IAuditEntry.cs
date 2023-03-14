@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="IAuditEntry.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -31,18 +31,18 @@ namespace Nomis.DataAccess.Interfaces.Models
         /// <summary>
         /// Key values.
         /// </summary>
-        public Dictionary<string, object?> KeyValues { get; }
+        public IDictionary<string, object?> KeyValues { get; }
 
         /// <inheritdoc cref="IAudit.OldValues" />
-        public Dictionary<string, object?> OldValues { get; }
+        public IDictionary<string, object?> OldValues { get; }
 
         /// <inheritdoc cref="IAudit.NewValues" />
-        public Dictionary<string, object?> NewValues { get; }
+        public IDictionary<string, object?> NewValues { get; }
 
         /// <summary>
         /// Temporary properties.
         /// </summary>
-        public List<PropertyEntry> TemporaryProperties { get; }
+        public IList<PropertyEntry> TemporaryProperties { get; }
 
         /// <inheritdoc cref="Enums.AuditType" />
         public AuditType AuditType { get; set; }
@@ -50,7 +50,7 @@ namespace Nomis.DataAccess.Interfaces.Models
         /// <summary>
         /// Changed columns in the database table.
         /// </summary>
-        public List<string> ChangedColumns { get; }
+        public IList<string> ChangedColumns { get; }
 
         /// <summary>
         /// Has temporary properties

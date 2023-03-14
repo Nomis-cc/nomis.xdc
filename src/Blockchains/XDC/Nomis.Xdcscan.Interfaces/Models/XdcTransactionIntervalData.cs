@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="XdcTransactionIntervalData.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -8,7 +8,7 @@
 using System.Numerics;
 using System.Text.Json.Serialization;
 
-using Nomis.Blockchain.Abstractions.Models;
+using Nomis.Utils.Contracts;
 using Nomis.Xdcscan.Interfaces.Extensions;
 
 namespace Nomis.Xdcscan.Interfaces.Models

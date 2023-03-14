@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="RemoveVersionFromParameterFilter.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ namespace Nomis.Api.Common.Swagger.Filters
                 return;
             }
 
-            var versionParameter = operation.Parameters.Single(p => p.Name == "version");
+            var versionParameter = operation.Parameters.Single(p => string.Equals(p.Name, "version", StringComparison.OrdinalIgnoreCase));
             operation.Parameters.Remove(versionParameter);
         }
     }

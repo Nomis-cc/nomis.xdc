@@ -4,16 +4,17 @@ import * as Emoji from "../../public/emoji/turnover";
 
 import { cards } from "../../utilities/text";
 
-export default function Turnover({ wallet }) {
+export default function Turnover({ wallet, group }) {
   const turnover = wallet.stats.walletTurnover;
-  const nativePrice = wallet.stats.balance * wallet.stats.balanceUSD;
-  const turnoverUSD = turnover * nativePrice;
+  const turnoverUSD = turnover * wallet.stats.nativeBalanceUSD;
 
   const low = 1000;
   const avg = 10000;
   const high = 100000;
 
-  const coin = wallet.stats.statsDescriptions.Balance.units;
+  const coin = group === "eco" 
+    ? wallet.stats.token 
+    : wallet.stats.statsDescriptions.NativeBalance.units;
 
   const emoji =
     turnoverUSD >= low

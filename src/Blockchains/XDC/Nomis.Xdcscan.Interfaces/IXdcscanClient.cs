@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="IXdcscanClient.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -21,6 +21,13 @@ namespace Nomis.Xdcscan.Interfaces
         /// <param name="address">Account address.</param>
         /// <returns>Returns <see cref="XdcscanAccount"/>.</returns>
         Task<XdcscanAccount> GetAccountDataAsync(string address);
+
+        /// <summary>
+        /// Get the account tokens.
+        /// </summary>
+        /// <param name="address">Account address.</param>
+        /// <returns>Returns list of <see cref="XdcscanAccountTokenData"/>.</returns>
+        Task<IList<XdcscanAccountTokenData>> GetTokensAsync(string address);
 
         /// <summary>
         /// Get list token holding by holder.

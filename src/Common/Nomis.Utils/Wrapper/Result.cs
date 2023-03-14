@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="Result.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -23,11 +23,11 @@ namespace Nomis.Utils.Wrapper
         }
 
         /// <inheritdoc/>
-        public List<string> Messages { get; set; } = new();
+        public IList<string> Messages { get; set; } = new List<string>();
 
         /// <inheritdoc/>
         /// <example>true</example>
-        public bool Succeeded { get; init; }
+        public bool Succeeded { get; set; }
 
         /// <summary>
         /// Fail operation result.
@@ -45,7 +45,7 @@ namespace Nomis.Utils.Wrapper
         /// <returns>Returns <see cref="IResult"/>.</returns>
         public static IResult Fail(string message)
         {
-            return new Result { Succeeded = false, Messages = new() { message } };
+            return new Result { Succeeded = false, Messages = new List<string> { message } };
         }
 
         /// <summary>
@@ -53,9 +53,9 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="IResult"/>.</returns>
-        public static IResult Fail(List<string> messages)
+        public static IResult Fail(IList<string> messages)
         {
-            return new Result { Succeeded = false, Messages = messages };
+            return new Result { Succeeded = false, Messages = messages.ToList() };
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="Task{IResult}"/>.</returns>
-        public static Task<IResult> FailAsync(List<string> messages)
+        public static Task<IResult> FailAsync(IList<string> messages)
         {
             return Task.FromResult(Fail(messages));
         }
@@ -103,7 +103,7 @@ namespace Nomis.Utils.Wrapper
         /// <returns>Returns <see cref="IResult"/>.</returns>
         public static IResult Success(string message)
         {
-            return new Result { Succeeded = true, Messages = new() { message } };
+            return new Result { Succeeded = true, Messages = new List<string> { message } };
         }
 
         /// <summary>
@@ -111,9 +111,9 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="IResult"/>.</returns>
-        public static IResult Success(List<string> messages)
+        public static IResult Success(IList<string> messages)
         {
-            return new Result { Succeeded = true, Messages = messages };
+            return new Result { Succeeded = true, Messages = messages.ToList() };
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="Task{IResult}"/>.</returns>
-        public static Task<IResult> SuccessAsync(List<string> messages)
+        public static Task<IResult> SuccessAsync(IList<string> messages)
         {
             return Task.FromResult(Success(messages));
         }
@@ -201,13 +201,13 @@ namespace Nomis.Utils.Wrapper
         }
 
         /// <inheritdoc/>
-        public TData Data { get; init; }
+        public TData Data { get; set; }
 
         /// <summary>
         /// Fail operation result with data.
         /// </summary>
         /// <returns>Returns <see cref="Result{T}"/>.</returns>
-        public static new Result<TData> Fail()
+        public new static Result<TData> Fail()
         {
             return new() { Succeeded = false };
         }
@@ -217,9 +217,9 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="message">Message.</param>
         /// <returns>Returns <see cref="Result{T}"/>.</returns>
-        public static new Result<TData> Fail(string message)
+        public new static Result<TData> Fail(string message)
         {
-            return new() { Succeeded = false, Messages = new() { message } };
+            return new() { Succeeded = false, Messages = new List<string> { message } };
         }
 
         /// <summary>
@@ -227,9 +227,9 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="Result{T}"/>.</returns>
-        public static new Result<TData> Fail(List<string> messages)
+        public new static Result<TData> Fail(IList<string> messages)
         {
-            return new() { Succeeded = false, Messages = messages };
+            return new() { Succeeded = false, Messages = messages.ToList() };
         }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace Nomis.Utils.Wrapper
         /// <returns>Returns <see cref="Result{T}"/>.</returns>
         public static Result<TData> Fail(TData data, string message)
         {
-            return new() { Succeeded = false, Data = data, Messages = new() { message } };
+            return new() { Succeeded = false, Data = data, Messages = new List<string> { message } };
         }
 
         /// <summary>
@@ -259,9 +259,9 @@ namespace Nomis.Utils.Wrapper
         /// <param name="data">Data.</param>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="Result{T}"/>.</returns>
-        public static Result<TData> Fail(TData data, List<string> messages)
+        public static Result<TData> Fail(TData data, IList<string> messages)
         {
-            return new() { Succeeded = false, Data = data, Messages = messages };
+            return new() { Succeeded = false, Data = data, Messages = messages.ToList() };
         }
 
         /// <summary>
@@ -280,7 +280,7 @@ namespace Nomis.Utils.Wrapper
         /// <returns>Returns <see cref="ErrorResult{T}"/>.</returns>
         public static ErrorResult<TData> ReturnError(string message)
         {
-            return new() { Succeeded = false, Messages = new() { message }, StatusCode = (int)HttpStatusCode.InternalServerError };
+            return new() { Succeeded = false, Messages = new List<string> { message }, StatusCode = (int)HttpStatusCode.InternalServerError };
         }
 
         /// <summary>
@@ -288,16 +288,16 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="ErrorResult{T}"/>.</returns>
-        public static ErrorResult<TData> ReturnError(List<string> messages)
+        public static ErrorResult<TData> ReturnError(IList<string> messages)
         {
-            return new() { Succeeded = false, Messages = messages, StatusCode = (int)HttpStatusCode.InternalServerError };
+            return new() { Succeeded = false, Messages = messages.ToList(), StatusCode = (int)HttpStatusCode.InternalServerError };
         }
 
         /// <summary>
         /// Fail operation result with data.
         /// </summary>
         /// <returns>Returns <see cref="Task{Result}"/>.</returns>
-        public static new Task<Result<TData>> FailAsync()
+        public new static Task<Result<TData>> FailAsync()
         {
             return Task.FromResult(Fail());
         }
@@ -307,7 +307,7 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="message">Message.</param>
         /// <returns>Returns <see cref="Task{Result}"/>.</returns>
-        public static new Task<Result<TData>> FailAsync(string message)
+        public new static Task<Result<TData>> FailAsync(string message)
         {
             return Task.FromResult(Fail(message));
         }
@@ -317,7 +317,7 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="Task{Result}"/>.</returns>
-        public static new Task<Result<TData>> FailAsync(List<string> messages)
+        public new static Task<Result<TData>> FailAsync(IList<string> messages)
         {
             return Task.FromResult(Fail(messages));
         }
@@ -349,7 +349,7 @@ namespace Nomis.Utils.Wrapper
         /// <param name="data">Data.</param>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="Task{Result}"/>.</returns>
-        public static Task<Result<TData>> FailAsync(TData data, List<string> messages)
+        public static Task<Result<TData>> FailAsync(TData data, IList<string> messages)
         {
             return Task.FromResult(Fail(data, messages));
         }
@@ -378,7 +378,7 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="Task{ErrorResult}"/>.</returns>
-        public static Task<ErrorResult<TData>> ReturnErrorAsync(List<string> messages)
+        public static Task<ErrorResult<TData>> ReturnErrorAsync(IList<string> messages)
         {
             return Task.FromResult(ReturnError(messages));
         }
@@ -387,7 +387,7 @@ namespace Nomis.Utils.Wrapper
         /// Success operation result with data.
         /// </summary>
         /// <returns>Returns <see cref="Result{T}"/>.</returns>
-        public static new Result<TData> Success()
+        public new static Result<TData> Success()
         {
             return new() { Succeeded = true };
         }
@@ -397,9 +397,9 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="message">Message.</param>
         /// <returns>Returns <see cref="Result{T}"/>.</returns>
-        public static new Result<TData> Success(string message)
+        public new static Result<TData> Success(string message)
         {
-            return new() { Succeeded = true, Messages = new() { message } };
+            return new() { Succeeded = true, Messages = new List<string> { message } };
         }
 
         /// <summary>
@@ -407,9 +407,9 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="Result{T}"/>.</returns>
-        public static new Result<TData> Success(List<string> messages)
+        public new static Result<TData> Success(IList<string> messages)
         {
-            return new() { Succeeded = true, Messages = messages };
+            return new() { Succeeded = true, Messages = messages.ToList() };
         }
 
         /// <summary>
@@ -430,7 +430,7 @@ namespace Nomis.Utils.Wrapper
         /// <returns>Returns <see cref="Result{T}"/>.</returns>
         public static Result<TData> Success(TData data, string message)
         {
-            return new() { Succeeded = true, Data = data, Messages = new() { message } };
+            return new() { Succeeded = true, Data = data, Messages = new List<string> { message } };
         }
 
         /// <summary>
@@ -439,16 +439,16 @@ namespace Nomis.Utils.Wrapper
         /// <param name="data">Data.</param>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="Result{T}"/>.</returns>
-        public static Result<TData> Success(TData data, List<string> messages)
+        public static Result<TData> Success(TData data, IList<string> messages)
         {
-            return new() { Succeeded = true, Data = data, Messages = messages };
+            return new() { Succeeded = true, Data = data, Messages = messages.ToList() };
         }
 
         /// <summary>
         /// Success operation result with data.
         /// </summary>
         /// <returns>Returns <see cref="Task{Result}"/>.</returns>
-        public static new Task<Result<TData>> SuccessAsync()
+        public new static Task<Result<TData>> SuccessAsync()
         {
             return Task.FromResult(Success());
         }
@@ -458,7 +458,7 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="message">Message.</param>
         /// <returns>Returns <see cref="Task{Result}"/>.</returns>
-        public static new Task<Result<TData>> SuccessAsync(string message)
+        public new static Task<Result<TData>> SuccessAsync(string message)
         {
             return Task.FromResult(Success(message));
         }
@@ -468,7 +468,7 @@ namespace Nomis.Utils.Wrapper
         /// </summary>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="Task{Result}"/>.</returns>
-        public static new Task<Result<TData>> SuccessAsync(List<string> messages)
+        public new static Task<Result<TData>> SuccessAsync(IList<string> messages)
         {
             return Task.FromResult(Success(messages));
         }
@@ -500,7 +500,7 @@ namespace Nomis.Utils.Wrapper
         /// <param name="data">Data.</param>
         /// <param name="messages">Message list.</param>
         /// <returns>Returns <see cref="Task{Result}"/>.</returns>
-        public static Task<Result<TData>> SuccessAsync(TData data, List<string> messages)
+        public static Task<Result<TData>> SuccessAsync(TData data, IList<string> messages)
         {
             return Task.FromResult(Success(data, messages));
         }

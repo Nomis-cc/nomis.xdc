@@ -1,9 +1,11 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="ConfigurationExtensions.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
+
+using System.Reflection;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +35,38 @@ namespace Nomis.Utils.Extensions
                 : sectionName);
             var settings = new TSettings();
             section.Bind(settings);
+
+            return settings;
+        }
+
+        /// <summary>
+        /// Get <see cref="ISettings"/> for <paramref name="settingsType"/>.
+        /// </summary>
+        /// <param name="configuration"><see cref="IConfiguration"/>.</param>
+        /// <param name="settingsType">The settings type.</param>
+        /// <param name="sectionName">Configuration section name.</param>
+        /// <returns>Returns settings got from configuration.</returns>
+        public static ISettings? GetSettings(
+            this IConfiguration configuration,
+            Type settingsType,
+            string? sectionName = null)
+        {
+            var section = configuration.GetSection(string.IsNullOrWhiteSpace(sectionName)
+                ? settingsType.Name
+                : sectionName);
+
+            ISettings? settings = null;
+            var constructors = settingsType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance)
+                .Union(settingsType.GetConstructors())
+                .ToList();
+            if (constructors.Count > 0)
+            {
+                var constructor = constructors.MinBy(c => c.GetParameters().Length);
+                int? constructorParameters = constructor?.GetParameters().Length;
+                object[] parameters = new object[constructorParameters ?? 0];
+                settings = constructor?.Invoke(parameters) as ISettings;
+                section.Bind(settings);
+            }
 
             return settings;
         }

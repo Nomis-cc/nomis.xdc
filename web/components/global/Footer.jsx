@@ -4,6 +4,7 @@ import Logo from "../Logo";
 import { footerMenu } from "../../utilities/menu";
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
   return (
     <footer>
       <div className="wrapper">
@@ -25,7 +26,7 @@ export default function Footer() {
             </ul>
           </nav>
           <a href="mailto:gm@nomis.cc">gm@nomis.cc</a>
-          <p>2022 © Nomis. All rights reserved.</p>
+          <p>{currentYear} © Nomis. All rights reserved.</p>
         </section>
       </div>
     </footer>

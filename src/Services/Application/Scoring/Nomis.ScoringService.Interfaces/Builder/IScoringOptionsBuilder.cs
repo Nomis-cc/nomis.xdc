@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="IScoringOptionsBuilder.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ namespace Nomis.ScoringService.Interfaces.Builder
         /// <summary>
         /// Collection of API settings.
         /// </summary>
-        public IEnumerable<IAPISettings> Settings { get; }
+        public IEnumerable<IApiSettings> Settings { get; }
 
         /// <summary>
         /// Create the builder instance.
@@ -35,15 +35,15 @@ namespace Nomis.ScoringService.Interfaces.Builder
         }
 
         /// <summary>
-        /// Register the blockchain score.
+        /// Register the services by service registrar.
         /// </summary>
         /// <typeparam name="TSettings">The API settings type.</typeparam>
-        /// <typeparam name="TServiceRegistrar">The blockchain service registrar type.</typeparam>
+        /// <typeparam name="TServiceRegistrar">The service registrar type.</typeparam>
         /// <param name="registrar"><see cref="IServiceRegistrar"/>.</param>
         // ReSharper disable once UnusedTypeParameter
-        public IScoringOptionsBuilder RegisterBlockchainScore<TSettings, TServiceRegistrar>(
-            IServiceRegistrar registrar)
-            where TSettings : class, IAPISettings, new()
+        public IScoringOptionsBuilder RegisterServices<TSettings, TServiceRegistrar>(
+            TServiceRegistrar registrar)
+            where TSettings : class, IApiSettings, new()
             where TServiceRegistrar : IServiceRegistrar;
 
         /// <summary>

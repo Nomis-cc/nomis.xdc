@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="EventLogger.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ namespace Nomis.DataAccess.PostgreSql.EventLogging
             if (@event is EventLog eventLog)
             {
                 _context.EventLogs.Add(eventLog);
-                return await _context.SaveChangesAsync();
+                return await _context.SaveChangesAsync().ConfigureAwait(false);
             }
             else
             {
@@ -55,7 +55,7 @@ namespace Nomis.DataAccess.PostgreSql.EventLogging
                     changes,
                     userId);
                 _context.EventLogs.Add(thisEvent);
-                return await _context.SaveChangesAsync();
+                return await _context.SaveChangesAsync().ConfigureAwait(false);
             }
         }
     }

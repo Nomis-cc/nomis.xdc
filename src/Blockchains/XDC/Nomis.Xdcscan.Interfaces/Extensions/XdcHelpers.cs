@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="XdcHelpers.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -21,23 +21,13 @@ namespace Nomis.Xdcscan.Interfaces.Extensions
         /// </summary>
         /// <param name="valueInWei">Wei.</param>
         /// <returns>Returns total XDC.</returns>
-        public static decimal ToXdc(this string valueInWei)
-        {
-            if (!decimal.TryParse(valueInWei, out decimal wei))
-            {
-                return 0;
-            }
-
-            return wei.ToXdc();
-        }
-
-        /// <summary>
-        /// Convert Wei value to XDC.
-        /// </summary>
-        /// <param name="valueInWei">Wei.</param>
-        /// <returns>Returns total XDC.</returns>
         public static decimal ToXdc(this in BigInteger valueInWei)
         {
+            if (valueInWei > new BigInteger(decimal.MaxValue))
+            {
+                return (decimal)(valueInWei / new BigInteger(100_000_000_000_000_000));
+            }
+
             return (decimal)valueInWei * 0.000_000_000_000_000_001M;
         }
 

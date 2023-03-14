@@ -1,0 +1,6 @@
+{
+  "ChainanalysisSettings": {
+    "ApiKey": "e1d780525c555c6dd44dab024d7c6a969cea15fd39ea2940eea255e1cd21ef0c",
+    "ApiBaseUrl": "https://public.chainalysis.com/"
+  }
+}

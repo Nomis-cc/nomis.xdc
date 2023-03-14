@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Dexes\Common\Nomis.DexProviderService.Interfaces\Nomis.DexProviderService.Interfaces.csproj" />
     <ProjectReference Include="..\..\..\Services\Infrastructure\Coingecko\Nomis.Coingecko.Interfaces\Nomis.Coingecko.Interfaces.csproj" />
     <ProjectReference Include="..\..\..\Services\Application\Scoring\Nomis.ScoringService.Interfaces\Nomis.ScoringService.Interfaces.csproj" />
     <ProjectReference Include="..\Nomis.Xdcscan.Interfaces\Nomis.Xdcscan.Interfaces.csproj" />

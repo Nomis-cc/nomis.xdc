@@ -1,12 +1,13 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="IWalletScore.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
 
-using Nomis.Blockchain.Abstractions.Models;
-using Nomis.Blockchain.Abstractions.Stats;
+using Nomis.Utils.Contracts;
+using Nomis.Utils.Contracts.Stats;
+using Nomis.Utils.Enums;
 
 namespace Nomis.Blockchain.Abstractions
 {
@@ -27,6 +28,19 @@ namespace Nomis.Blockchain.Abstractions
         /// Nomis Score in range of [0; 1].
         /// </summary>
         public double Score { get; set; }
+
+        /// <summary>
+        /// Nomis minted Score in range of [0; 10000].
+        /// </summary>
+        public ushort MintedScore { get; set; }
+
+        /// <inheritdoc cref="Utils.Enums.ScoreType"/>
+        public ScoreType ScoreType { get; }
+
+        /// <summary>
+        /// Soulbound token signature.
+        /// </summary>
+        public string? Signature { get; set; }
 
         /// <summary>
         /// Additional stat data used in score calculations.

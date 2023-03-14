@@ -102,7 +102,7 @@ export default function Input({ fullAddress, blockchain }) {
           <>
             <h5>{label} Score</h5>
             {blockchains.map((blockchain, id) => {
-              if (blockchain.groupLabel === label)
+              if (blockchain.groupLabel === label && blockchain.hide !== true)
                 return (
                   <li
                     key={blockchain.item + blockchain.group}

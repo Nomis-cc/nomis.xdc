@@ -1,5 +1,39 @@
 {
   "XdcscanSettings": {
-    "ApiBaseUrl": "https://xdc.blocksscan.io/"
+    "ApiBaseUrl": "https://xdc.blocksscan.io/",
+    "BlockchainDescriptor": {
+      "ChainId": 50,
+      "ChainName": "XinFin XDC Network",
+      "BlockchainName": "XDC",
+      "BlockchainSlug": "xdc",
+      "BlockExplorerUrls": [
+        "https://xdcscan.io/",
+        "https://xdc.blocksscan.io/"
+      ],
+      "NativeCurrency": {
+        "Id": "",
+        "Name": "XDC Network",
+        "Symbol": "XDC",
+        "Decimals": 18,
+        "LogoUri": "https://s2.coinmarketcap.com/static/img/coins/64x64/2634.png"
+      },
+      "Order": 1000,
+      "Icon": "https://s3.coinmarketcap.com/static-gravity/image/1318d2ab4e1d45a5bd5d8c44b557189a.jpg",
+      "LabelIcon": null,
+      "Enabled": true,
+      "Type": "EVM",
+      "PlatformIds": {
+        "Coingecko": "xdce-crowd-sale",
+        "DefiLLama": "xdc"
+      },
+      "BalancesCheckerAddress": "",
+      "RPCUrls": [
+        "https://rpc.xdcrpc.com",
+        "https://erpc.xinfin.network",
+        "https://rpc.xinfin.network"
+      ],
+      "IsEVMCompatible": true,
+      "SBTContractAddresses": null
+    }
   }
 }

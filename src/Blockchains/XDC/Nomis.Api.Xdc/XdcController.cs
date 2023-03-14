@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="XdcController.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -12,9 +12,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Nomis.Api.Common.Swagger.Examples;
+using Nomis.Utils.Enums;
 using Nomis.Utils.Wrapper;
 using Nomis.Xdcscan.Interfaces;
 using Nomis.Xdcscan.Interfaces.Models;
+using Nomis.Xdcscan.Interfaces.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Nomis.Api.Xdc
@@ -57,11 +60,13 @@ namespace Nomis.Api.Xdc
         /// <summary>
         /// Get Nomis Score for given wallet address.
         /// </summary>
-        /// <param name="address" example="xdca4c7e09c74faf6EbE73A5a3E17dbbD34c98D8393">XDC wallet address to get Nomis Score.</param>
+        /// <param name="request">Request for getting the wallet stats.</param>
+        /// <param name="cancellationToken"><see cref="CancellationToken"/>.</param>
         /// <returns>An Nomis Score value and corresponding statistical data.</returns>
         /// <remarks>
         /// Sample request:
-        ///     GET /api/v1/xdc/wallet/xdc281eBd3E6186E71B8591F9CbcD33A572B057f86b/score
+        ///
+        ///     GET /api/v1/xdc/wallet/xdc86871225DFD426A132DaAbDA85a9E13A0164bB4d/score?scoreType=0&amp;nonce=0&amp;deadline=133160867380732039
         /// </remarks>
         /// <response code="200">Returns Nomis Score and stats.</response>
         /// <response code="400">Address not valid.</response>
@@ -75,13 +80,20 @@ namespace Nomis.Api.Xdc
         [ProducesResponseType(typeof(Result<XdcWalletScore>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResult<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorResult<string>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(RateLimitResult), StatusCodes.Status429TooManyRequests)]
         [ProducesResponseType(typeof(ErrorResult<string>), StatusCodes.Status500InternalServerError)]
         [Produces(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> GetXdcWalletScoreAsync(
-            [Required(ErrorMessage = "Wallet address should be set")] string address)
+            [Required(ErrorMessage = "Request should be set")] XdcWalletStatsRequest request,
+            CancellationToken cancellationToken = default)
         {
-            var result = await _scoringService.GetWalletStatsAsync(address);
-            return Ok(result);
+            switch (request.ScoreType)
+            {
+                case ScoreType.Finance:
+                    return Ok(await _scoringService.GetWalletStatsAsync<XdcWalletStatsRequest, XdcWalletScore, XdcWalletStats, XdcTransactionIntervalData>(request, cancellationToken));
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 }

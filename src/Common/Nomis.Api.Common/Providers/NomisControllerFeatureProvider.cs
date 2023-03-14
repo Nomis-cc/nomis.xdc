@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="NomisControllerFeatureProvider.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -18,14 +18,14 @@ namespace Nomis.Api.Common.Providers
     public class NomisControllerFeatureProvider :
         ControllerFeatureProvider
     {
-        private readonly IEnumerable<IAPISettings> _apiSettings;
+        private readonly IEnumerable<IApiSettings> _apiSettings;
 
         /// <summary>
         /// Initialize <see cref="NomisControllerFeatureProvider"/>.
         /// </summary>
-        /// <param name="apiSettings">Collection of <see cref="IAPISettings"/>.</param>
+        /// <param name="apiSettings">Collection of <see cref="IApiSettings"/>.</param>
         public NomisControllerFeatureProvider(
-            IEnumerable<IAPISettings> apiSettings)
+            IEnumerable<IApiSettings> apiSettings)
         {
             _apiSettings = apiSettings;
         }
@@ -38,7 +38,7 @@ namespace Nomis.Api.Common.Providers
                 return false;
             }
 
-            var apiSettings = _apiSettings.FirstOrDefault(x => x.ControllerName == typeInfo.Name);
+            var apiSettings = _apiSettings.FirstOrDefault(x => string.Equals(x.ControllerName, typeInfo.Name, StringComparison.OrdinalIgnoreCase));
             return apiSettings?.APIEnabled != false;
         }
     }

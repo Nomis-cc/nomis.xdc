@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="IResult.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -15,12 +15,12 @@ namespace Nomis.Utils.Wrapper
         /// <summary>
         /// Message list.
         /// </summary>
-        List<string> Messages { get; set; }
+        IList<string> Messages { get; set; }
 
         /// <summary>
         /// Operation is successed.
         /// </summary>
-        bool Succeeded { get; init; }
+        bool Succeeded { get; set; }
     }
 
     /// <summary>
@@ -33,6 +33,6 @@ namespace Nomis.Utils.Wrapper
         /// <summary>
         /// Data.
         /// </summary>
-        TData Data { get; init; }
+        TData Data { get; set; }
     }
 }

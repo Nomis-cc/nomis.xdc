@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="ScoringOptionsBuilder.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ namespace Nomis.ScoringService.Interfaces.Builder
     {
         private readonly IServiceCollection _services;
         private readonly IConfiguration _configuration;
-        private readonly List<IAPISettings> _settings = new();
+        private readonly List<IApiSettings> _settings = new();
         private readonly List<IServiceRegistrar> _registrars = new();
 
         /// <summary>
@@ -36,16 +36,24 @@ namespace Nomis.ScoringService.Interfaces.Builder
         }
 
         /// <inheritdoc />
-        public IEnumerable<IAPISettings> Settings => _settings;
+        public IEnumerable<IApiSettings> Settings => _settings;
 
         /// <inheritdoc />
-        public IScoringOptionsBuilder RegisterBlockchainScore<TSettings, TServiceRegistrar>(
-            IServiceRegistrar registrar)
-            where TSettings : class, IAPISettings, new()
+        public IScoringOptionsBuilder RegisterServices<TSettings, TServiceRegistrar>(
+            TServiceRegistrar registrar)
+            where TSettings : class, IApiSettings, new()
             where TServiceRegistrar : IServiceRegistrar
         {
-            _settings.Add(_configuration.GetSettings<TSettings>());
-            _registrars.Add(registrar);
+            var settings = _configuration.GetSettings<TSettings>();
+            if (!_settings.Contains(settings))
+            {
+                _settings.Add(settings);
+            }
+
+            if (!_registrars.Contains(registrar))
+            {
+                _registrars.Add(registrar);
+            }
 
             return this;
         }

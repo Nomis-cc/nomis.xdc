@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="AuditableDbContextExtensions.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -86,14 +86,14 @@ namespace Nomis.DataAccess.PostgreSql.Extensions
             var auditEntries = OnBeforeSaveChanges(context, currentUserId);
             if (currentUserId == Guid.Empty)
             {
-                int result = await PublishEventsAsync(context, eventLogger, mediator, auditEntries, cancellationToken);
-                return await context.BaseSaveChangesAsync(cancellationToken) + result;
+                int result = await PublishEventsAsync(context, eventLogger, mediator, auditEntries, cancellationToken).ConfigureAwait(false);
+                return await context.BaseSaveChangesAsync(cancellationToken).ConfigureAwait(false) + result;
             }
             else
             {
-                int result = await PublishEventsAsync(context, eventLogger, mediator, auditEntries, cancellationToken);
-                result += await OnAfterSaveChangesAsync(context, auditEntries.Where(_ => _.HasTemporaryProperties).ToList());
-                return await context.SaveChangesAsync(true, cancellationToken) + result;
+                int result = await PublishEventsAsync(context, eventLogger, mediator, auditEntries, cancellationToken).ConfigureAwait(false);
+                result += await OnAfterSaveChangesAsync(context, auditEntries.Where(_ => _.HasTemporaryProperties).ToList()).ConfigureAwait(false);
+                return await context.SaveChangesAsync(true, cancellationToken).ConfigureAwait(false) + result;
             }
         }
 
@@ -297,17 +297,17 @@ namespace Nomis.DataAccess.PostgreSql.Extensions
                             NewValues = x.NewValues
                         }).ToList();
                         var changes = (oldValues.Count == 0 ? null : JsonSerializer.Serialize(oldValues), newValues.Count == 0 ? null : JsonSerializer.Serialize(newValues));
-                        await eventLogger.SaveAsync(domainEvent, changes);
-                        await mediator.Publish(domainEvent, cancellationToken);
+                        await eventLogger.SaveAsync(domainEvent, changes).ConfigureAwait(false);
+                        await mediator.Publish(domainEvent, cancellationToken).ConfigureAwait(false);
                     }
                     else
                     {
-                        await eventLogger.SaveAsync(domainEvent, (null, null));
-                        await mediator.Publish(domainEvent, cancellationToken);
+                        await eventLogger.SaveAsync(domainEvent, (null, null)).ConfigureAwait(false);
+                        await mediator.Publish(domainEvent, cancellationToken).ConfigureAwait(false);
                     }
                 });
-            await Task.WhenAll(tasks);
-            return await context.BaseSaveChangesAsync(cancellationToken);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+            return await context.BaseSaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         #endregion PublishEventsAsync

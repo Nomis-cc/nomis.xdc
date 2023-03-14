@@ -3,32 +3,32 @@ import React from "react";
 export default function DataTable({ wallet, group }) {
   const [isVisible, setIsVisible] = React.useState(false);
 
-  const stats = [];
-  let i = 0;
-  for (var key in wallet.stats) {
-    stats[i] = {
-      title: key,
-      value: wallet.stats[key],
-    };
-    let founded = false;
-    for (var key1 in wallet.stats.statsDescriptions) {
-      if (key.toLowerCase() === key1.toLowerCase()) {
-        stats[i].label = wallet.stats.statsDescriptions[key1].label;
-        stats[i].description = wallet.stats.statsDescriptions[key1].description;
-        stats[i].units = group === "eco" && wallet.stats.statsDescriptions[key1].units === "Eco token" 
-          ? wallet.stats.ecoToken 
-          : wallet.stats.statsDescriptions[key1].units;
-        founded = true;
+    const stats = [];
+    let i = 0;
+    for (var key in wallet.stats) {
+      stats[i] = {
+        title: key,
+        value: wallet.stats[key],
+      };
+      let founded = false;
+      for (var key1 in wallet.stats.statsDescriptions) {
+        if (key.toLowerCase() === key1.toLowerCase()) {
+          stats[i].label = wallet.stats.statsDescriptions[key1].label;
+          stats[i].description = wallet.stats.statsDescriptions[key1].description;
+          stats[i].units = group === "eco" && wallet.stats.statsDescriptions[key1].units === "token" 
+            ? wallet.stats.token 
+            : wallet.stats.statsDescriptions[key1].units;
+          founded = true;
+        }
+      }
+
+      if (founded) {
+        i++;
+      }
+      else {
+        stats.splice(i, 1);
       }
     }
-
-    if (founded) {
-      i++;
-    }
-    else {
-      stats.splice(i, 1);
-    }
-  }
 
   return (
     <div className="DataTable">

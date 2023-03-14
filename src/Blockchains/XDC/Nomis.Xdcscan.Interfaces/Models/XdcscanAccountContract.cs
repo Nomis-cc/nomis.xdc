@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="XdcscanAccountContract.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ namespace Nomis.Xdcscan.Interfaces.Models
         /// Function hashes.
         /// </summary>
         [JsonPropertyName("functionHashes")]
-        public Dictionary<string, string> FunctionHashes { get; set; } = new();
+        public IDictionary<string, string> FunctionHashes { get; set; } = new Dictionary<string, string>();
 
         /// <summary>
         /// Optimization.

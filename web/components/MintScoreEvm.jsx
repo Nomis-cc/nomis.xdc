@@ -12,6 +12,8 @@ const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function MintScore(props) {
   const [scoreValue, setScoreValue] = React.useState("");
+  const [signatureValue, setSignatureValue] = React.useState("");
+  const [deadlineValue, setDeadlineValue] = React.useState("");
   const [addressValue, setAddressValue] = React.useState("");
   const [scoreTokenValue, setScoreTokenValue] = React.useState("");
   const [noData, setNoData] = React.useState(true);
@@ -19,7 +21,7 @@ export default function MintScore(props) {
   const [currentBlockchain, setCurrentBlockchain] = React.useState(null);
   const renderAfterCalled = React.useRef(false);
 
-  const isEcoScore =
+  const isTokenScore =
     blockchains.find((b) => b.slug === props.blockchainSlug).group === "eco"
       ? true
       : false;
@@ -43,7 +45,7 @@ export default function MintScore(props) {
   }
   const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
   const signer = provider.getSigner();
-  const contractAddress = getContractAddress(props.blockchain);
+  const contractAddress = getContractAddress(props.blockchainSlug);
   if (contractAddress === undefined) {
     return (
       <div className="container">
@@ -56,9 +58,9 @@ export default function MintScore(props) {
     );
   }
 
-  const chainId = getChainId(props.blockchain);
+  const chainId = getChainId(props.blockchainSlug);
   const ABI =
-    '[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"addr","type":"address"}],"name":"getScore","outputs":[{"components":[{"internalType":"uint16","name":"value","type":"uint16"},{"internalType":"uint256","name":"updated","type":"uint256"}],"internalType":"struct NomisScore.Score","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"scores","outputs":[{"internalType":"uint16","name":"value","type":"uint16"},{"internalType":"uint256","name":"updated","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint16","name":"score","type":"uint16"}],"name":"setScore","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"}]';
+    '[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getNonce","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"addr","type":"address"}],"name":"getScore","outputs":[{"components":[{"internalType":"uint16","name":"value","type":"uint16"},{"internalType":"uint256","name":"updated","type":"uint256"}],"internalType":"struct NomisScore.Score","name":"","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"scores","outputs":[{"internalType":"uint16","name":"value","type":"uint16"},{"internalType":"uint256","name":"updated","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"newBaseUri","type":"string"}],"name":"setBaseUri","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes","name":"signature","type":"bytes"},{"internalType":"uint16","name":"score","type":"uint16"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"setScore","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"}]';
   const contract = new ethers.Contract(contractAddress, ABI, signer);
 
   const getScoreToken = async (address) => {
@@ -76,17 +78,17 @@ export default function MintScore(props) {
     }
   };
 
-  function getContractAddress(blockchain) {
+  function getContractAddress(blockchainSlug) {
     for (let i = 0; i < blockchains.length; i++) {
-      if (blockchains[i].slug === blockchain) {
+      if (blockchains[i].slug === blockchainSlug) {
         return blockchains[i].contractAddress;
       }
     }
   }
 
-  function getChainId(blockchain) {
+  function getChainId(blockchainSlug) {
     for (let i = 0; i < blockchains.length; i++) {
-      if (blockchains[i].slug === blockchain) {
+      if (blockchains[i].slug === blockchainSlug) {
         return blockchains[i].chainId;
       }
     }
@@ -103,22 +105,40 @@ export default function MintScore(props) {
   const [loading, setLoading] = React.useState(true);
 
   async function fetchMyScore(address, blockchain, apiHost) {
-    await fetch(
-      blockchains.find((b) => b.slug === props.blockchainSlug).group === "eco"
-        ? `${apiHost}/api/v1/${blockchain}/wallet/${address}/eco-score?ecoToken=0`
-        : `${apiHost}/api/v1/${blockchain}/wallet/${address}/score`
-    )
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setScoreValue(Math.floor(result.data.score * 10000));
-          setNoData(result.data.stats.noData);
-        },
-        (error) => {
-          console.error(error);
-        }
+    if (address === "") {
+      return;
+    }
+    var switchResult = await tryToSwitchChain();
+    if (switchResult) {
+      const nonce = parseInt(await contract.getNonce(), 16);
+      console.log("nonce: ", nonce);
+      const blockNumber = await provider.getBlockNumber();
+      const block = await provider.getBlock(blockNumber);
+      const timestamp = block.timestamp;
+      const deadline = timestamp + 10000;
+      console.log("deadline: ", deadline);
+
+      setDeadlineValue(deadline);
+      await fetch(
+        isTokenScore
+          ? `${apiHost}/api/v1/${blockchain}/wallet/${address}/score?Nonce=${nonce}&Deadline=${deadline}&ScoreType=1&TokenAddress=${props.ecoTokenAddress}&UseTokenLists=false&GetHoldTokensBalances=true&GetCyberConnectProtocolData=true`
+          : `${apiHost}/api/v1/${blockchain}/wallet/${address}/score?Nonce=${nonce}&Deadline=${deadline}&ScoreType=0&UseTokenLists=false&GetHoldTokensBalances=true&GetCyberConnectProtocolData=true`
       )
-      .finally(() => setLoading(false));
+        .then((res) => res.json())
+        .then(
+          (result) => {
+            setScoreValue(result.data.mintedScore);
+            console.log("mintedScore: ", result.data.mintedScore);
+            setSignatureValue(result.data.signature);
+            console.log("signature: ", result.data.signature);
+            setNoData(result.data.stats.noData);
+          },
+          (error) => {
+            console.error(error);
+          }
+        )
+        .finally(() => setLoading(false));
+    }
   }
 
   async function tryToSwitchChain() {
@@ -158,9 +178,25 @@ export default function MintScore(props) {
       setLoading(true);
       var switchResult = await tryToSwitchChain();
       if (switchResult) {
-        const transaction = currentBlockchain === "xdc" 
-          ? await contract.setScore(scoreValue, { gasLimit: 315750 }).catch(console.error)
-          : await contract.setScore(scoreValue);
+        const transaction =
+          currentBlockchain === "xdc"
+            ? await contract
+                .setScore(signatureValue, scoreValue, deadlineValue, {
+                  gasLimit: 315750,
+                })
+                .catch(console.error)
+            : currentBlockchain === "celo" && isTokenScore
+            ? await contract.setScore(
+                signatureValue,
+                scoreValue,
+                deadlineValue,
+                { gasLimit: 19000000 }
+              )
+            : await contract.setScore(
+                signatureValue,
+                scoreValue,
+                deadlineValue
+              );
         await transaction.wait();
         await getScoreToken(addressValue);
       }
@@ -186,21 +222,20 @@ export default function MintScore(props) {
 
       setAddressValue(accounts[0]);
       getScoreToken(accounts[0]).catch(console.error);
-      fetchMyScore(accounts[0], blockchain, apiHost).catch(console.error);
+      await fetchMyScore(accounts[0], blockchain, apiHost).catch(console.error);
 
       window.ethereum.on("accountsChanged", function (accounts) {
+        setAddressValue(accounts[0]);
         getScoreToken(accounts[0]).catch(console.error);
         fetchMyScore(accounts[0], blockchain, apiHost).catch(console.error);
       });
-  
+
       if (action === "openMint") {
-        handleOpen();
-      }
-      else if (action === "showPaymentError") {
-        alert('Payment failed!'); // TODO - change to popup
-      }
-      else if (action === "showCheckoutCancel") {
-        alert('Checkout cancelled!'); // TODO - change to popup
+        await handleOpen();
+      } else if (action === "showPaymentError") {
+        alert("Payment failed!"); // TODO - change to popup
+      } else if (action === "showCheckoutCancel") {
+        alert("Checkout cancelled!"); // TODO - change to popup
       }
     }
   }
@@ -212,8 +247,11 @@ export default function MintScore(props) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isVisible, setIsVisible] = React.useState(false);
 
-  const handleOpen = () => {
+  const handleOpen = async () => {
     setIsOpen(true);
+    fetchMyScore(addressValue, currentBlockchain, API_HOST).catch(
+      console.error
+    );
     setTimeout(() => setIsVisible(true), 200);
   };
 
@@ -229,7 +267,9 @@ export default function MintScore(props) {
 
   const [checkout, setCheckout] = React.useState(null);
   const [paid, setPaid] = React.useState(false);
-  const [buttonLabel, setButtonLabel] = React.useState(isEcoScore ? "Create checkout" : "Mint or Update");
+  const [buttonLabel, setButtonLabel] = React.useState(
+    isTokenScore ? "Create checkout" : "Mint or Update"
+  );
   // const location = useGeoLocation();
   // console.log(location.country);
   // const currency = countries.all.find((c) => c.alpha2 === location.country)
@@ -247,12 +287,14 @@ export default function MintScore(props) {
       return;
     }
 
-    let domain = window.location.origin === "http://localhost:3000" 
-      ? "https://test.nomis.cc" 
-      : window.location.origin;
+    let domain =
+      window.location.origin === "http://localhost:3000"
+        ? "https://test.nomis.cc"
+        : window.location.origin;
 
     // disable Rapyd payment for prod
-    if (domain.includes("test.") !== true) {
+    // if (domain.includes("test.") !== true) {
+    if (true) {
       console.log(domain.includes("test."));
       setPaid(true);
       setButtonLabel("Mint or Update");
@@ -307,12 +349,12 @@ export default function MintScore(props) {
           cancel_checkout_url: `${domain}/score/polygon_eco/${addressValue}?action=showCheckoutCancel`,
         }),
       })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        window.localStorage.setItem("checkoutId", data.data.id);
-      });
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          window.localStorage.setItem("checkoutId", data.data.id);
+        });
     }
 
     let checkoutId = window.localStorage.getItem("checkoutId");
@@ -323,8 +365,7 @@ export default function MintScore(props) {
         setCheckout(data);
         if (data.data.payment.status === "ACT") {
           setButtonLabel("Complete payment $4.99");
-        }
-        else if (data.data.payment.status === "CLO") {
+        } else if (data.data.payment.status === "CLO") {
           setPaid(true);
           setButtonLabel("Mint or Update");
         }
@@ -356,8 +397,9 @@ export default function MintScore(props) {
                 <h4>Connected Wallet Address</h4>
                 <p className="address">{addressValue}</p>
               </div>
-
-              <Score wallet={wallet} />
+              <Score
+                wallet={{ score: scoreValue / 10000, stats: { noData: false } }}
+              />
 
               <div className="token">
                 <h4>My Nomis Token on {props.blockchain}</h4>
@@ -367,11 +409,12 @@ export default function MintScore(props) {
               <div className="action">
                 {loading ? (
                   <div className="action loading">Loading...</div>
-                ) : !isEcoScore || paid ? (
+                ) : !isTokenScore || paid ? (
                   <button
-                    type="submit" 
-                    className="button" 
-                    onClick={mintNomisToken}>
+                    type="submit"
+                    className="button"
+                    onClick={mintNomisToken}
+                  >
                     {buttonLabel}
                   </button>
                 ) : window.localStorage.getItem("checkoutId") && checkout ? (
@@ -381,10 +424,11 @@ export default function MintScore(props) {
                     </button>
                   </Link>
                 ) : (
-                  <button 
-                    type="submit" 
-                    className="button" 
-                    onClick={mintEcoNomisToken(API_HOST)}>
+                  <button
+                    type="submit"
+                    className="button"
+                    onClick={mintEcoNomisToken(API_HOST)}
+                  >
                     Create checkout
                   </button>
                 )}

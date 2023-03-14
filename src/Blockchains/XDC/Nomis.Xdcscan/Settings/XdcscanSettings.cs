@@ -1,11 +1,11 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="XdcscanSettings.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
 
-using Nomis.Utils.Contracts.Common;
+using Nomis.Blockchain.Abstractions.Contracts;
 
 namespace Nomis.Xdcscan.Settings
 {
@@ -13,7 +13,7 @@ namespace Nomis.Xdcscan.Settings
     /// Xdcscan settings.
     /// </summary>
     internal class XdcscanSettings :
-        ISettings
+        IBlockchainSettings
     {
         /// <summary>
         /// API base URL.
@@ -22,5 +22,8 @@ namespace Nomis.Xdcscan.Settings
         /// <see href="https://xdc.blocksscan.io/docs"/>
         /// </remarks>
         public string? ApiBaseUrl { get; set; }
+
+        /// <inheritdoc />
+        public BlockchainDescriptor? BlockchainDescriptor { get; set; }
     }
 }

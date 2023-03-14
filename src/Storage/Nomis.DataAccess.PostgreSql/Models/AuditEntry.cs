@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="AuditEntry.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -39,22 +39,22 @@ namespace Nomis.DataAccess.PostgreSql.Models
         public string EntityName { get; }
 
         /// <inheritdoc/>
-        public Dictionary<string, object?> KeyValues { get; } = new();
+        public IDictionary<string, object?> KeyValues { get; } = new Dictionary<string, object?>();
 
         /// <inheritdoc/>
-        public Dictionary<string, object?> OldValues { get; } = new();
+        public IDictionary<string, object?> OldValues { get; } = new Dictionary<string, object?>();
 
         /// <inheritdoc/>
-        public Dictionary<string, object?> NewValues { get; } = new();
+        public IDictionary<string, object?> NewValues { get; } = new Dictionary<string, object?>();
 
         /// <inheritdoc/>
-        public List<PropertyEntry> TemporaryProperties { get; } = new();
+        public IList<PropertyEntry> TemporaryProperties { get; } = new List<PropertyEntry>();
 
         /// <inheritdoc/>
         public AuditType AuditType { get; set; }
 
         /// <inheritdoc/>
-        public List<string> ChangedColumns { get; } = new();
+        public IList<string> ChangedColumns { get; } = new List<string>();
 
         /// <inheritdoc/>
         public bool HasTemporaryProperties => TemporaryProperties.Count > 0;

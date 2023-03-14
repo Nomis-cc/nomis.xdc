@@ -1,6 +1,6 @@
 ﻿// ------------------------------------------------------------------------------------------------------
 // <copyright file="ExceptionHandlingMiddleware.cs" company="Nomis">
-// Copyright (c) Nomis, 2022. All rights reserved.
+// Copyright (c) Nomis, 2023. All rights reserved.
 // The Application under the MIT license. See LICENSE file in the solution root for full license information.
 // </copyright>
 // ------------------------------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ namespace Nomis.Api.Common.Middlewares
         {
             try
             {
-                await next(context);
+                await next(context).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -64,7 +64,7 @@ namespace Nomis.Api.Common.Middlewares
                 string errorId = Guid.NewGuid().ToString();
                 LogContext.PushProperty(nameof(errorId).Pascalize(), errorId);
 
-                var responseModel = await ErrorResult<string>.ReturnErrorAsync(exception.Message);
+                var responseModel = await ErrorResult<string>.ReturnErrorAsync(exception.Message).ConfigureAwait(false);
                 responseModel.Source = exception.TargetSite?.DeclaringType?.FullName?.Trim();
                 responseModel.Exception = exception.Message.Trim();
                 responseModel.ErrorId = errorId;
@@ -73,7 +73,7 @@ namespace Nomis.Api.Common.Middlewares
                 {
                     if (_env.IsDevelopment())
                     {
-                        int? pos = exception.StackTrace?.IndexOf(Environment.NewLine);
+                        int? pos = exception.StackTrace?.IndexOf(Environment.NewLine, StringComparison.OrdinalIgnoreCase);
                         responseModel.StackTrace = exception.StackTrace?.Trim()
                             .Substring(0, pos != null ? (int)pos - 3 : exception.StackTrace?.Trim().Length ?? 0).Trim() ?? string.Empty;
                     }
@@ -92,7 +92,10 @@ namespace Nomis.Api.Common.Middlewares
                         response.StatusCode = responseModel.StatusCode = (int)e.StatusCode;
                         if (e.ErrorMessages != null && e.ErrorMessages.Count != 0)
                         {
-                            responseModel.Messages.AddRange(e.ErrorMessages);
+                            foreach (string errorMessage in e.ErrorMessages)
+                            {
+                                responseModel.Messages.Add(errorMessage);
+                            }
                         }
 
                         break;
@@ -100,7 +103,7 @@ namespace Nomis.Api.Common.Middlewares
                     default:
                         _logger.LogCritical(exception, exception.Message);
                         response.StatusCode = responseModel.StatusCode = (int)HttpStatusCode.InternalServerError;
-                        responseModel.Messages = new() { "An error has occurred" };
+                        responseModel.Messages = new List<string> { "An error has occurred" };
                         break;
                 }
 
@@ -110,7 +113,7 @@ namespace Nomis.Api.Common.Middlewares
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 });
 
-                await response.WriteAsync(result);
+                await response.WriteAsync(result).ConfigureAwait(false);
             }
         }
     }
